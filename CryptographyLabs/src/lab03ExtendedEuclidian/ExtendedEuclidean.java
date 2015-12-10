@@ -50,10 +50,10 @@ public class ExtendedEuclidean {
 	 * Compute y = (a - b)z mod p
 	 * Determine x = yq + b
 	 */
-	public void exerciseThree(long k, long l) {		
+	public void exerciseThree(long h, long l) {		
 		long[] egcdVals = calculatedEGCD(); //1:d 2:factor f 3:factor g
 		
-		long a = k;	//int
+		long a = h;	//int
 		long b = l;	//int
 		long q = this.j;	//prime
 		long p = this.k;	//prime		
