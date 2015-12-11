@@ -1,72 +1,49 @@
 package lab07SymmetricKeyProgramming;
 
-
 import java.nio.charset.Charset;
-import java.security.Provider;
 import java.security.Security;
-
+import java.security.spec.KeySpec;
 import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
-/**
- * Basic symmetric encryption example
- */
-public class SimpleSymmetricExample
-{   
-    public static void main(
-        String[]    args)
-        throws Exception
-    {
-        byte[]        input = new byte[] { 
-                0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 
-                (byte)0x88, (byte)0x99, (byte)0xaa, (byte)0xbb,
-                (byte)0xcc, (byte)0xdd, (byte)0xee, (byte)0xff };
-//        byte[]        keyBytes = new byte[] { 
-//                0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-//                0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
-//                0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 };
-        
-        
-        String keyString = "B7c332yXza";
-        String messageString = "hallo welt";
-        
-        byte[] keyBytes = keyString.getBytes(Charset.forName("UTF-8"));
-        System.out.println(keyBytes.length);
-        byte[] messageBytes = messageString.getBytes(Charset.forName("UTF-8"));
-        
-        SecretKeySpec key = new SecretKeySpec(keyBytes, "AES");
+public class SimpleSymmetricExample {
+	public static void main(String[] args) throws Exception {
 
-        Security.addProvider(new BouncyCastleProvider());
-        Cipher cipher = Cipher.getInstance("AES/ECB/NoPadding", "BC");
-        
+		Security.addProvider(new BouncyCastleProvider());
 
-        System.out.println("input text : " + messageString);
-        
-        // encryption pass
-        
-        byte[] cipherText = new byte[messageBytes.length];
-        
-        cipher.init(Cipher.ENCRYPT_MODE, key);
+		String keyString = "B7c332yXza";
+		String messageString = "hallowelt";
 
-        int ctLength = cipher.update(messageBytes, 0, messageBytes.length, cipherText, 0);
-        
-        ctLength += cipher.doFinal(cipherText, ctLength);
-        
-        System.out.println("cipher text: " + Utils.toHex(cipherText) + " bytes: " + ctLength);
-        
-        // decryption pass
-        
-        byte[] plainText = new byte[ctLength];
-        
-        cipher.init(Cipher.DECRYPT_MODE, key);
+		byte[] keyBytes = keyString.getBytes(Charset.forName("UTF-8"));
+		System.out.println(keyBytes.length);
+		byte[] messageBytes = messageString.getBytes(Charset.forName("UTF-8"));
 
-        int ptLength = cipher.update(cipherText, 0, ctLength, plainText, 0);
-        
-        ptLength += cipher.doFinal(plainText, ptLength);
-        
-        System.out.println("plain text : " + Utils.toHex(plainText) + " bytes: " + ptLength);
-    }
+		SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1", "BC");
+		KeySpec spec = new PBEKeySpec(keyString.toCharArray(), "123456789".getBytes(), 4096, 128);
+		SecretKey tmp = factory.generateSecret(spec);
+		SecretKey key = new SecretKeySpec(tmp.getEncoded(), "AES");
+
+		Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding", "BC");
+
+		System.out.println("input text : " + messageString);
+
+		// encryption pass
+		cipher.init(Cipher.ENCRYPT_MODE, key);
+		byte[] ciphertext = cipher.doFinal(messageBytes);
+		// byte[] iv = cipher.getIV();
+		System.out.println("cipher text: " + Utils.toHex(ciphertext) + " bytes: " + ciphertext.length);
+
+		// decryption pass
+		cipher.init(Cipher.DECRYPT_MODE, key);
+		byte[] plaintext = cipher.doFinal(ciphertext);// removed offset of
+														// ctlength
+
+		System.out.println("plain text : " + Utils.toHex(plaintext) + " bytes: " + plaintext.length);
+		System.out.println(new String(plaintext));
+	}
 }
-
