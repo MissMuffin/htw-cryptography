@@ -5,7 +5,7 @@ import java.util.Random;
 
 public class RabinMillerPrimeGeneration {	
 	
-	private static boolean generatePrime(BigInteger n, BigInteger security) {
+	private static boolean RabinMiller(BigInteger n, BigInteger security) {
 		
 		BigInteger zero = BigInteger.ZERO;
 		BigInteger one =  BigInteger.ONE;
@@ -13,7 +13,7 @@ public class RabinMillerPrimeGeneration {
 		BigInteger three = BigInteger.valueOf(3);
 		
 		if(n.compareTo(three) < 0) {
-			System.out.println("input needs to be grater or equal to 3");
+//			System.out.println("input needs to be greater or equal to 3");
 			return false;
 		} else {
 			if(n.mod(two).equals(one)) {
@@ -34,10 +34,9 @@ public class RabinMillerPrimeGeneration {
 					} while (a.compareTo(n) >= 0 || a.compareTo(two) < 0); //http://stackoverflow.com/questions/2290057/how-to-generate-a-random-biginteger-value-in-java
 					
 					BigInteger v = a.modPow(s, n);
-					if (v.equals(one)) {
-//						System.out.println("v passes = a test");
-					} else {
-						BigInteger i = new BigInteger("1");
+					if (!v.equals(one)) {
+						
+						BigInteger i = new BigInteger("0");
 						while (!v.equals(n.subtract(one))) {
 							if (i.equals(t.subtract(one))) {
 								return false;
@@ -51,23 +50,85 @@ public class RabinMillerPrimeGeneration {
 				}
 				
 			} else {
-				System.out.println("input is multiple of 2, not good");
+//				System.out.println("input is multiple of 2, not good");
 				return false;
 			}
 		}		
 		return true;
 	}
 	
-	public static void main(String[] args) {
-		BigInteger g = BigInteger.valueOf(0);
-		BigInteger limit = BigInteger.valueOf(1000000);
-		while(!g.equals(limit)) {
-			
-			if(generatePrime(g, BigInteger.valueOf(5))) {
-				System.out.println(g.toString() + " TRUE");			
+	private static void findPositiveFalse(int bitlength, int certainty) {
+		BigInteger n;
+		boolean found = false;
+		while(!found) {
+			n  = new BigInteger(bitlength, new Random());
+			if(RabinMiller(n, BigInteger.valueOf(certainty)) && !n.isProbablePrime(10)) {
+				System.out.println("false positive number: " + n);
+				found = true;
 			}
+		}
+	}
+	
+	private static void findPrime(int bitLength, int certainty) {
+		BigInteger n;
+		boolean found = false;
+		while(!found) {
+			n  = new BigInteger(bitLength, new Random());
+			if(RabinMiller(n, BigInteger.valueOf(certainty))) {
+				System.out.println("probable prime: " + n);
+				System.out.println("BigInt prime: " + n.isProbablePrime(10));
+				found = true;
+			}
+		}
+	}
+	
+	private static void findPrimes(long limit, int certainty) {
+		BigInteger g = BigInteger.valueOf(0);
+		BigInteger limitBigInt = BigInteger.valueOf(limit);
+		int count = 0;
+		int countBigInt = 0;
+		
+		while(!g.equals(limit)) {
+			if(RabinMiller(g, BigInteger.valueOf(certainty))) {
+//				System.out.println(g.toString() + " TRUE");	
+				count++;
+			}
+			if (g.isProbablePrime(certainty)) {
+				countBigInt++;
+			}
+			
 			g = g.add(BigInteger.ONE);
 		}
 		System.out.println("DONE");
+		System.out.println("number of primes us : " + count); //should be 78498
+		System.out.println("number of primes BigInt : " + countBigInt);
 	}
+	
+	public static void main(String[] args) {
+//		RabinMillerPrimeGeneration.findPrimes(1000000l, 10);
+		
+//		RabinMillerPrimeGeneration.findPositiveFalse(32, 1);
+		
+		RabinMillerPrimeGeneration.findPrime(512, 5);
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
