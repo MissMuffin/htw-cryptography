@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Dictionary {
 
-	private static String wordsPath = "src/lab10DictionaryAttack/words_linux_en.txt";
+	private static String wordsPath = "src/lab10DictionaryAttack/moarWords.txt";
 	private static String commonPath = "src/lab10DictionaryAttack/common_words_en.txt";
 	private ArrayList<String> words; 
 	private ArrayList<String> common;
@@ -44,12 +44,12 @@ public class Dictionary {
 	public int countValidWords(String message) throws Exception {		
 		int count = 0;
 		String[] messageWords = message.split("\\s+");//optimization: dont use split, iterate over string 
-		
-		for(String s : messageWords) {			
+		int end = messageWords.length < 6 ? messageWords.length : 6;
+		for(int i = 0; i < end; i++){//String s : messageWords) {			
 			for (String word : common) {
-				if (s.toLowerCase().equals(word) 
-						|| s.toUpperCase().equals(word) 
-						|| (capitalize(s)).equals(word)) {
+				if (messageWords[i].toLowerCase().equals(word) 
+						|| messageWords[i].toUpperCase().equals(word) 
+						|| (capitalize(messageWords[i])).equals(word)) {
 					count++;
 				}
 			}

@@ -77,7 +77,7 @@ public class ExtendedEuclidean {
 	
 	
 	public static void main(String[] args) {
-		ExtendedEuclidean e = new ExtendedEuclidean(899, 961);
+		ExtendedEuclidean e = new ExtendedEuclidean(22, 23);
 		
 		e.printGCD(e.calculatedEGCD());
 //		e.exerciseThree(5, 10);

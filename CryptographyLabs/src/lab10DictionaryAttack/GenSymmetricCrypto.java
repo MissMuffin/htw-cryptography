@@ -15,7 +15,7 @@ public class GenSymmetricCrypto {
 	
 	public GenSymmetricCrypto() throws Exception {
 		Security.addProvider(new BouncyCastleProvider());
-		cipherObject = Cipher.getInstance("Blowfish/ECB/NoPadding", "BC");
+		cipherObject = Cipher.getInstance("Blowfish/ECB/PKCS5Padding", "BC");
 	}
 	
 	public byte[] encrypt(String messageString, String keyString) throws Exception {		
